@@ -4,7 +4,9 @@ Use this script to convert a Microsoft CQD building mapping exported file (TSV, 
 
 ## Usage
 
-```".\Convert-BuildingMappingToEcdnSubnetMapping.ps1 .\cqd_file-original.tsv -CountryCodesMapping (.\country_codes.ps1) -OutFilePath .\subnet-mapping.csv"```
+``` PowerShell
+.\Convert-BuildingMappingToEcdnSubnetMapping.ps1 .\cqd_file-original.tsv -CountryCodesMapping (.\country_codes.ps1) -OutFilePath .\subnet-mapping.csv
+```
 
 ## Contributing
 
