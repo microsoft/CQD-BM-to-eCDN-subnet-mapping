@@ -3,7 +3,7 @@
     Convert a CQD building mapping file to a subnet mapping format.
 .DESCRIPTION
     Script to convert a CQD building mapping file to an eCDN subnet mapping format.
-    The building mapping file must contain all the following required columns:
+    The building mapping file must contain all the following columns even if they are empty:
         NetworkIP            # ! REQUIRED
         NetworkName          # ! REQUIRED
         NtworkRange          # ! REQUIRED
@@ -29,8 +29,8 @@
         Country
         City
 
-    The script will output the eCDN subnet mapping format to the console. The output can be saved to a CSV file using the following command:
-    .\Convert-BuildingMappingToEcdnSubnetMapping.ps1 -BMFilePath .\building-mapping.tsv | Export-Csv -Path .\subnet-mapping.csv -NoTypeInformation
+    Without OutFilePath, the script will output the eCDN subnet mapping format to the console. 
+    Provide an OutFilePath to save the converted data to a CSV file.
 .PARAMETER BMFilePath
     The path to the CQD building mapping file.
 .PARAMETER OutFilePath
@@ -39,9 +39,17 @@
     The delimiter used in the building mapping file. (Default: will be auto-detected)
 .PARAMETER CountryCodesMapping
     Provide a hashtable mapping country names to their corresponding two-letter country codes. (Optional)
+    Note that Microsoft eCDN expects two-letter country codes in the Country column.
+.PARAMETER RemoveEmpties
+    Remove rows where the GroupId is empty.
+.PARAMETER RemoveIPv6
+    Remove rows where the Subnets column contains IPv6 addresses.
 .EXAMPLE
     .\Convert-BuildingMappingToEcdnSubnetMapping.ps1 -BMFilePath .\building-mapping.tsv
-    This example will convert the building mapping file to an eCDN subnet mapping format.
+    This example will output to console, a convertion the building mapping file to an eCDN subnet mapping format.
+.EXAMPLE
+    .\Convert-BuildingMappingToEcdnSubnetMapping.ps1 -BMFilePath .\building-mapping.tsv -OutFilePath .\subnet-mapping.csv
+    This example will save the converted data to a CSV file.
 .OUTPUTS
     An array of eCDN subnet mapping objects containing the following properties:
         GroupId
@@ -52,8 +60,11 @@
         Country
         City
     
-    The output can be saved to a CSV file using the following command:
+    The output can be saved to a CSV file using the below command.
     .\Convert-BuildingMappingToEcdnSubnetMapping.ps1 -BMFilePath .\building-mapping.tsv | Export-Csv -Path .\subnet-mapping.csv -NoTypeInformation
+
+    Caution: If the source data contains quotation marks ("), this method will produce an invalid CSV file.
+    To avoid this, use the OutFilePath parameter to save the output to a CSV file.
 .NOTES
     There are three expectations of the building mapping file.
     1. Not having a header row. (optional)
@@ -198,9 +209,19 @@ $subnet_mapping = $building_mapping_data | Select-Object $outputProperties
 if ($RemoveEmpties) {
     $subnet_mapping = $subnet_mapping.Where({$_.GroupId})
 }
+else {
+    if ($subnet_mapping.Where({!$_.GroupId})) {
+        Write-Warning "There are rows with empty GroupId values. Use the RemoveEmpties switch to remove these rows."
+    }
+}
 
 if ($RemoveIPv6) {
     $subnet_mapping = $subnet_mapping.Where({$_.Subnets -notmatch "\d*:"})
+}
+else {
+    if ($subnet_mapping.Where({$_.Subnets -notmatch "\d*:"})) {
+        Write-Warning "There are rows with IPv6 addresses in the Subnets column. Use the RemoveIPv6 switch to remove these rows."
+    }
 }
 
 if (-not $OutFilePath) {
