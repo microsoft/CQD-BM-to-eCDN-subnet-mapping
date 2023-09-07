@@ -2,6 +2,11 @@
 
 Use this script to convert a Microsoft CQD building mapping exported file (TSV, CSV, etc.) to a Microsoft eCDN management console supported subnet mapping format.
 
+## Project files
+
+- Convert-BuildingMappingToEcdnSubnetMapping.ps1
+- country_codes.ps1
+
 ## Usage
 
 ``` PowerShell
