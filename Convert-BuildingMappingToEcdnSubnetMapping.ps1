@@ -38,8 +38,8 @@
 .PARAMETER Delimiter
     The delimiter used in the building mapping file. (Default: will be auto-detected)
 .PARAMETER CountryCodesMapping
-    Provide a hashtable mapping country names to their corresponding two-letter country codes. (Optional)
-    Note that Microsoft eCDN expects two-letter country codes in the Country column.
+    Provide a hashtable mapping country names to their corresponding two-letter ISO country codes. (Optional)
+    Note that Microsoft eCDN expects two-letter ISO country codes in the Country column.
 .PARAMETER RemoveEmpties
     Remove rows where the GroupId is empty.
 .PARAMETER RemoveIPv6
@@ -75,6 +75,9 @@
 
     Author: Diego Reategui
     Alias: v-dreategui
+
+    Copyright (c) Microsoft Corporation.
+    Licensed under the MIT License.
 #>
 [cmdletbinding()]
 param(
@@ -206,6 +209,7 @@ $outputProperties = @(
 
 $subnet_mapping = $building_mapping_data | Select-Object $outputProperties
 
+# Removing rows with invalid data
 if ($RemoveEmpties) {
     $subnet_mapping = $subnet_mapping.Where({$_.GroupId})
 }
@@ -222,6 +226,10 @@ else {
     if ($subnet_mapping.Where({$_.Subnets -notmatch "\d*:"})) {
         Write-Warning "There are rows with IPv6 addresses in the Subnets column. Use the RemoveIPv6 switch to remove these rows."
     }
+}
+
+if ($subnet_mapping.Where({$_.Country.Length -ne 2})) {
+    Write-Warning "There are rows with invalid Country values. Use the CountryCodesMapping parameter to provide a hashmap of map country names to their corresponding two-letter ISO country codes."
 }
 
 if (-not $OutFilePath) {

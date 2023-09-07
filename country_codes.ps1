@@ -1,3 +1,9 @@
+# Mapping of country/region names to two-letter ISO country/region codes
+# Created for use with the Convert-BuildingMappingToEcdnSubnetMapping.ps1 script.
+# Since CQD Building Mapping exports the country/region name, but eCDN Subnet Mapping expects the two-letter ISO country/region code.
+#
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
 $countryCodes = @{
     "United States" = "US"
     "Ireland" = "IE"
@@ -25,6 +31,7 @@ $countryCodes = @{
     "Belgium" = "BE"
     "France" = "FR"
     "Turkey" = "TR"
+    "Türkiye" = "TR"
     "Denmark" = "DK"
     "Switzerland" = "CH"
     "Hong Kong SAR" = "HK"
