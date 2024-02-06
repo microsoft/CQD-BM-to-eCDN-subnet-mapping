@@ -13,6 +13,8 @@ Use this script to convert a Microsoft CQD building mapping exported file (TSV, 
 .\Convert-BuildingMappingToEcdnSubnetMapping.ps1 .\cqd_file-original.tsv -CountryCodesMapping (.\country_codes.ps1) -OutFilePath .\subnet-mapping.csv
 ```
 
+Where `cqd_file-original.tsv` is your exported building mapping file, and `subnet-mapping.csv` is the Microsoft eCDN compatible subnet mapping file.
+
 ## Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
